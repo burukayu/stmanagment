@@ -1,8 +1,17 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import API from "../api";
 import "./pages.css"; // reuse the same CSS
+import { jwtDecode } from "jwt-decode";
 
+interface DecodedToken {
+  user_id: number;
+  username: string;
+  email: string;
+  role: string;
+  exp: number;
+  iat: number;
+}
 const Register: React.FC = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -12,15 +21,23 @@ const Register: React.FC = () => {
 
   const handleRegister = async () => {
     try {
-      await API.post("register/", { username, password, email, role });
-      alert("Account created successfully!");
-      navigate("/"); // redirect to login
-    } catch (err) {
-      alert("Registration failed, please check your input.");
-      console.error(err);
+        const res = await API.post("register/", { username, password, email, role });
+        localStorage.setItem("token", res.data.access);
+        const user: DecodedToken = jwtDecode(res.data.access);
+        localStorage.setItem("user", JSON.stringify(user));
+        navigate("/tasks");
+        } catch (err) {
+        alert("Registration failed, please check your input.");
+        console.error(err);
+        }
+      };
+  useEffect(()=>{
+        const user= localStorage.getItem('user')
+            if(user){
+                navigate("/tasks")
+            }
     }
-  };
-
+  );
   return (
     <div className="body1">
     <div className="container1">
