@@ -13,7 +13,6 @@ const Navbar: React.FC = () => {
   // Check login status when Navbar mounts
   useEffect(() => {
     const storedUser = localStorage.getItem("user");
-    debugger
     if (storedUser && storedUser !== "{}") {
       setUser(JSON.parse(storedUser));
     } else {

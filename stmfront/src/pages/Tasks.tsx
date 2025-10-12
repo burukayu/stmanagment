@@ -37,7 +37,7 @@ const Tasks: React.FC = () => {
 
  const toggleComplete = async (task: Task) => {
   try {
-    await API.patch(`tasks/${task.id}/`, {
+    await API.put(`tasks/${task.id}/`, {
       status: task.status === "completed" ? "pending" : "completed",
     });
     fetchTasks();
@@ -80,7 +80,7 @@ const showtaskoradd = () => {
           Tasks Dashboard - {user?.username} ({user?.role})
         </h1>
 {
-        (user?.role === "staff" || user?.role === "admin") ? (
+        (user)?(// ?.role === "staff" || user?.role === "admin") ? (
         <button
           className="btn-toggle-view"
           onClick={showtaskoradd }
@@ -90,7 +90,7 @@ const showtaskoradd = () => {
         ): null}
       </div>
       {showAdd ? (
-        (user?.role === "staff" || user?.role === "admin") ? (
+        // (user?.role === "staff" || user?.role === "admin") ? (
           <div className="task-form">
             <h2 className="form-title">Create New Task</h2>
             <input
@@ -108,6 +108,8 @@ const showtaskoradd = () => {
             <select value={status}className="input-field" 
              onChange={(e) => setStatus(e.target.value)}>
             <option value="pending">Pending</option>
+            <option value="done">Done</option>
+            <option value="redo">Redo</option>
             <option value="completed">Completed</option>
           </select>
 
@@ -117,9 +119,9 @@ const showtaskoradd = () => {
             <button onClick={createTask} className="btn-add">Add Task</button>
           )}
           </div>
-        ) : (
-          <p className="no-access">You don’t have permission to add tasks.</p>
-        )
+        // ) : (
+        //   <p className="no-access">You don’t have permission to add tasks.</p>
+        // )
       ) : (
         <div className="task-grid">
           {tasks.length === 0 ? (
@@ -129,9 +131,14 @@ const showtaskoradd = () => {
               <div key={task.id} className="task-card">
                 <h3>{task.title}</h3>
                 <p>{task.description}</p>
-                <span className={`status ${task.status}`}>{task.status}</span>
-                <div className="task-actions">
-                  <button
+                <p className="meta">
+                <strong>Owner:</strong> {task.owner_username} <br />
+                <strong>Last updated by:</strong>{" "}
+                {task.last_updated_by_username || "—"} <br />
+                <strong>Updated:</strong> {new Date(task.updated_at).toLocaleString()}
+                </p>
+                <span className={`status ${task.status}`}>{task.status}</span><div className="task-actions">
+                  {/* <button
                     className={`btn-toggle ${
                       task.status === "completed" ? "done" : "pending"
                     }`}
@@ -140,7 +147,7 @@ const showtaskoradd = () => {
                     {task.status === "completed"
                       ? "Mark Undone"
                       : "Mark Done"}
-                  </button>
+                  </button> */}
             <button onClick={() => startEdit(task)} className="btn-edit">
                 Edit
               </button>

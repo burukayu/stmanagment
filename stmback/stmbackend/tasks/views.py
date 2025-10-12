@@ -2,23 +2,47 @@ from rest_framework import generics, permissions
 from .models import Task
 from .serializers import TaskSerializer
 from .permissions import IsOwnerOrAdmin
+from django.db.models import Q
 
 class TaskListCreateView(generics.ListCreateAPIView):
     serializer_class = TaskSerializer
     permission_classes = [permissions.IsAuthenticated]
 
+    # def get_queryset(self):
+    #     user = self.request.user
+    #     # Staff & admin see all tasks, users only their own
+    #     if user.is_staff or user.is_superuser:
+    #         return Task.objects.all().order_by('-created_at')
+    #     return Task.objects.filter(owner=user).order_by('-created_at')
     def get_queryset(self):
         user = self.request.user
-        # Staff & admin see all tasks, users only their own
-        if user.is_staff or user.is_superuser:
-            return Task.objects.all().order_by('-created_at')
-        return Task.objects.filter(owner=user).order_by('-created_at')
+        
+        if user.is_superuser:  # Admin
+            # All tasks except those created by other admins
+            return Task.objects.exclude(owner__is_superuser=True).order_by('-updated_at')
+
+        elif user.is_staff:  # Staff
+            # Tasks created or updated by staff themselves
+            # + All tasks created by normal users
+            return Task.objects.filter(
+                Q(owner=user) | Q(last_updated_by=user) | Q(owner__is_staff=False, owner__is_superuser=False)
+            ).order_by('-updated_at')
+
+        else:  # Normal user
+            # Only their tasks with status pending or redo
+            return Task.objects.filter(
+                owner=user,
+                status__in=['pending', 'redo']
+            ).order_by('-updated_at')
 
     def perform_create(self, serializer):
-        serializer.save(owner=self.request.user)
+        serializer.save(owner=self.request.user,last_updated_by=self.request.user)
 
 
 class TaskDetailView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Task.objects.all()
     serializer_class = TaskSerializer
     permission_classes = [permissions.IsAuthenticated, IsOwnerOrAdmin]
+
+    def perform_update(self, serializer):
+        serializer.save(last_updated_by=self.request.user)

@@ -150,7 +150,13 @@
   background-color: #fff3cd;
   color: #856404;
 }
-
+.status.redo {
+  background-color: #af0311;
+  color: #f3f1eb;
+}.status.done {
+  background-color: #09a370;
+  color: #856404;
+}
 .task-actions {
   margin-top: 10px;
   display: flex;
