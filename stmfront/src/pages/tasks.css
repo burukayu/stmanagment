@@ -1,0 +1,36 @@
+.task-card {
+  max-width: 500px;
+  margin: 50px auto;
+  padding: 20px;
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  border: 1px solid #eee;
+}
+
+.task-card h2 {
+  color: #4f46e5;
+  margin-bottom: 10px;
+}
+
+.task-card p {
+  color: #555;
+  margin-bottom: 20px;
+}
+
+.status {
+  padding: 5px 10px;
+  border-radius: 999px;
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+
+.status.pending {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.status.completed {
+  background: #dcfce7;
+  color: #166534;
+}

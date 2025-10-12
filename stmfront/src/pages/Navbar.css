@@ -1,0 +1,35 @@
+.navbar {
+  width: 95%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #072981;
+  padding: 15px 40px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+}
+
+.heading {
+  color: #f8c94e;
+  font-size: 24px;
+  cursor: pointer;
+}
+
+.nav-buttons {
+  display: flex;
+  gap: 15px;
+}
+
+.btn-nav {
+  background-color: #f8c94e;
+  color: #1a1a2e;
+  padding: 8px 16px;
+  border: none;
+  border-radius: 6px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.btn-nav:hover {
+  background-color: #f6e58d;
+}
