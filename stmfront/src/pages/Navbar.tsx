@@ -18,7 +18,7 @@ const Navbar: React.FC = () => {
     } else {
       setUser(null);
     }
-  });
+  },[]);
 
   // Logout handler
   const handleLogout = () => {

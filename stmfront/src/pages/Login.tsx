@@ -36,17 +36,22 @@ useEffect(() => {
     <div className="container1">
       <h2 className="heading">Login</h2>
       <input
-        className="input"
-        placeholder="Username"
-        value={username}
-        onChange={(e) => setUsername(e.target.value)}
-      />
+      className="input"
+      type="text"
+      name="username"
+      placeholder="Username"
+      value={username}
+      onChange={(e) => setUsername(e.target.value)}
+      autoComplete="username"
+     />
       <input
         type="password"
         className="input"
+        name="password"
         placeholder="Password"
         value={password}
-        onChange={(e) => setPassword(e.target.value)}
+        onChange={(e) => setPassword(e.target.value)}  
+       autoComplete="password"
       />
       <button className="btn" onClick={handleLogin}>
         Login

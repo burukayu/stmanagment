@@ -46,3 +46,24 @@ class TaskDetailView(generics.RetrieveUpdateDestroyAPIView):
 
     def perform_update(self, serializer):
         serializer.save(last_updated_by=self.request.user)
+    
+
+    def update_priority(self, new_priority, user=None):
+        """
+        Update the task priority and optionally set last_updated_by.
+        Raises ValueError if new_priority is not an integer.
+        """
+        try:
+            new_priority = int(new_priority)
+        except (TypeError, ValueError):
+            raise ValueError("Priority must be an integer")
+
+        self.priority = new_priority
+        if user is not None:
+            self.last_updated_by = user
+        # call save() so updated_at (auto_now) is refreshed
+        self.save()
+        return self
+# ...existing code...
+    def __str__(self):
+        return self.title

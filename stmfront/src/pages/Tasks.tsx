@@ -1,16 +1,17 @@
 import React, { useEffect, useState } from "react";
 import API from "../api";
-import { Task, User } from "../types";
-import "./tasks.css";
+import { Task, User } from "../types"; 
 
 const Tasks: React.FC = () => {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [title, setTitle] = useState("");
   const [desc, setDesc] = useState("");
   const [showAdd, setShowAdd] = useState(false);
+  const [isAddE, setisAddE] = useState(false);
   const [editingTask, setEditingTask] = useState<Task | null>(null);
   const [status, setStatus] = useState("pending");
   const user: User = JSON.parse(localStorage.getItem("user") || "{}");
+  const [statusOptions, setStatusOptions] = useState(["pending", "done", "redo", "completed"]);
 
   const fetchTasks = async () => {
     if (!user || !user.username) {
@@ -36,12 +37,12 @@ const Tasks: React.FC = () => {
   };
 
  const toggleComplete = async (task: Task) => {
-  try {
+  try {debugger
     await API.put(`tasks/${task.id}/`, {
       status: task.status === "completed" ? "pending" : "completed",
     });
     fetchTasks();
-  } catch (error) {
+  } catch (error) {debugger
     console.error("Failed to toggle task:", error);
   }
 };
@@ -60,10 +61,14 @@ const Tasks: React.FC = () => {
     setTitle(task.title);
     setDesc(task.description);
     setStatus(task.status);
-    setShowAdd(true);
+    setShowAdd(true); 
+    setStatusOptions(["pending", "done", "redo", "completed"]); 
   };
 const showtaskoradd = () => {
-    setShowAdd(!showAdd);
+  console.log(user)
+    setShowAdd(!showAdd);   
+    setisAddE(true); 
+    setStatusOptions(["pending"]); 
     setEditingTask(null);
     setTitle("");
     setDesc("");
@@ -105,14 +110,17 @@ const showtaskoradd = () => {
               onChange={(e) => setDesc(e.target.value)}
               placeholder="Task description"
             />
-            <select value={status}className="input-field" 
-             onChange={(e) => setStatus(e.target.value)}>
-            <option value="pending">Pending</option>
-            <option value="done">Done</option>
-            <option value="redo">Redo</option>
-            <option value="completed">Completed</option>
-          </select>
-
+        <select
+          value={status}
+          className="input-field"
+          onChange={(e) => setStatus(e.target.value)}
+        >
+          {statusOptions.map((item) => (
+            <option key={item} value={item}>
+              {item.charAt(0).toUpperCase() + item.slice(1)}
+            </option>
+          ))}
+        </select>
           {editingTask ? (
             <button onClick={updateTask} className="btn-add">Update Task</button>
           ) : (
@@ -138,7 +146,7 @@ const showtaskoradd = () => {
                 <strong>Updated:</strong> {new Date(task.updated_at).toLocaleString()}
                 </p>
                 <span className={`status ${task.status}`}>{task.status}</span><div className="task-actions">
-                  {/* <button
+                  <button
                     className={`btn-toggle ${
                       task.status === "completed" ? "done" : "pending"
                     }`}
@@ -147,7 +155,7 @@ const showtaskoradd = () => {
                     {task.status === "completed"
                       ? "Mark Undone"
                       : "Mark Done"}
-                  </button> */}
+                  </button>
             <button onClick={() => startEdit(task)} className="btn-edit">
                 Edit
               </button>
