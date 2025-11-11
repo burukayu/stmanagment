@@ -6,6 +6,7 @@ import './App.css';
 import Navbar from './pages/Navbar';
 import Register from './pages/Register';
 import { User } from './types';
+import { UserProvider } from "./pages/UserContext";
 const App: React.FC = () => {
    const [user, setUser] = useState<User | null>(() => {
     const storedUser = localStorage.getItem("user");
@@ -13,6 +14,7 @@ const App: React.FC = () => {
   });
 
   return (
+    <UserProvider>
     <Router>
       <Navbar />
       <Routes> 
@@ -21,6 +23,7 @@ const App: React.FC = () => {
         <Route path="/tasks" element={<Tasks />} />
       </Routes>
     </Router>
+    </UserProvider>
   );
 }
 

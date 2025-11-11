@@ -1,24 +1,25 @@
 import React, { useEffect, useState }  from "react";
 import { useNavigate } from "react-router-dom";
 import "./Navbar.css"; // reuse the same CSS
+import { useUser } from "./UserContext";
 interface User {
   token_type: string;
   user_id?: number;
 }
 
 const Navbar: React.FC = () => {
-  const [user, setUser] = useState<User | null>(null);
+   const { user, setUser } = useUser();
   const navigate = useNavigate();
 
   // Check login status when Navbar mounts
-  useEffect(() => {
-    const storedUser = localStorage.getItem("user");
-    if (storedUser && storedUser !== "{}") {
-      setUser(JSON.parse(storedUser));
-    } else {
-      setUser(null);
-    }
-  },[]);
+  // useEffect(() => {
+  //   const storedUser = localStorage.getItem("user");
+  //   if (storedUser && storedUser !== "{}") {
+  //     setUser(JSON.parse(storedUser));
+  //   } else {
+  //     setUser(null);
+  //   }
+  // },[]);
 
   // Logout handler
   const handleLogout = () => {

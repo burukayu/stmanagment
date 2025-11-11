@@ -35,9 +35,15 @@ useEffect(() => {
     <div className="body1">
     <div className="container1">
       <h2 className="heading">Login</h2>
-      <input
-      className="input"
-      type="text"
+     <form
+  onSubmit={(e) => {
+    e.preventDefault(); // prevent page reload
+    handleLogin();
+  }}
+>
+     <input
+     className="input"
+     type="text"
       name="username"
       placeholder="Username"
       value={username}
@@ -59,6 +65,8 @@ useEffect(() => {
       <a onClick={() => navigate("/register")} className="link">
               Create Account
             </a>
+</form>
+     
     </div>
     </div>
   );

@@ -26,7 +26,7 @@ class TaskListCreateView(generics.ListCreateAPIView):
             # + All tasks created by normal users
             return Task.objects.filter(
                 Q(owner=user) | Q(last_updated_by=user) | Q(owner__is_staff=False, owner__is_superuser=False)
-            ).order_by('-updated_at')
+            ).exclude(status__in=['completed']).order_by('-updated_at')
 
         else:  # Normal user
             # Only their tasks with status pending or redo
@@ -47,7 +47,12 @@ class TaskDetailView(generics.RetrieveUpdateDestroyAPIView):
     def perform_update(self, serializer):
         serializer.save(last_updated_by=self.request.user)
     
+    def update(self, request, *args, **kwargs):
+        # Force partial update even for PUT
+        kwargs['partial'] = True
+        return super().update(request, *args, **kwargs)
 
+        
     def update_priority(self, new_priority, user=None):
         """
         Update the task priority and optionally set last_updated_by.

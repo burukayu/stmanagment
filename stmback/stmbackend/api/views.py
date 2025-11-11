@@ -12,9 +12,23 @@ class RegisterView(generics.CreateAPIView):
     serializer_class = RegisterSerializer
 
     def create(self, request, *args, **kwargs):
+         
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        user = serializer.save()
+
+        # pass extra fields based on role
+        role = request.data.get("role", "").lower()
+        extra_fields = {}
+
+        if role == "admin":
+            extra_fields['is_superuser'] = True
+            extra_fields['is_staff'] = True
+        elif role == "staff":
+            extra_fields['is_staff'] = True
+
+        user = serializer.save(**extra_fields)  # ✅ pass extra fields directly
+
+
 
         refresh = RefreshToken.for_user(user)
         access_token = refresh.access_token

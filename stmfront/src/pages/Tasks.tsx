@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import API from "../api";
 import { Task, User } from "../types"; 
-
+import Select from 'react-select'
 const Tasks: React.FC = () => {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [title, setTitle] = useState("");
@@ -12,7 +12,16 @@ const Tasks: React.FC = () => {
   const [status, setStatus] = useState("pending");
   const user: User = JSON.parse(localStorage.getItem("user") || "{}");
   const [statusOptions, setStatusOptions] = useState(["pending", "done", "redo", "completed"]);
-
+  const [selectedTask, setSelectedTask] = useState("  " as any);
+  const [showConfirm, setShowConfirm] = useState(false);
+  const [deleteConfirm, setdeleteConfirm] = useState(false);
+  const [id, setid] = useState(0);
+  const [newStatus, setNewStatus] = useState("");const options = [
+  { value: 'pending', label: 'pending' },
+  { value: 'done', label: 'done' },
+  { value: 'redo', label: 'redo' },
+  { value: 'completed', label: 'completed' }
+]
   const fetchTasks = async () => {
     if (!user || !user.username) {
       setTasks([]);
@@ -30,19 +39,26 @@ const Tasks: React.FC = () => {
     setDesc("");
     showAdd && setShowAdd(false);
   };
-
-  const deleteTask = async (id: number) => {
+ const confirmdelete = (id:any) => {
+    setid(id); 
+    setdeleteConfirm(true);
+  };
+  const canceldelete = ( ) => {
+    setid(0); 
+    setdeleteConfirm(false);
+  };
+  const deleteTask = async () => {
     await API.delete(`tasks/${id}/`);
     fetchTasks();
   };
 
  const toggleComplete = async (task: Task) => {
-  try {debugger
+  try {
     await API.put(`tasks/${task.id}/`, {
-      status: task.status === "completed" ? "pending" : "completed",
+      status: task.status ,
     });
     fetchTasks();
-  } catch (error) {debugger
+  } catch (error) {
     console.error("Failed to toggle task:", error);
   }
 };
@@ -73,7 +89,23 @@ const showtaskoradd = () => {
     setTitle("");
     setDesc("");
 }
+ const handleStatusChange = (task:any, option:any) => {
+    setSelectedTask(task);
+    setNewStatus(option.value);
+    setShowConfirm(true);
+  };
+   const confirmChange = () => { 
+  selectedTask.status = newStatus
+  toggleComplete(selectedTask); 
+    // example: updateTaskStatus(selectedTask.id, newStatus);
+    setShowConfirm(false);
+    setSelectedTask(null);
+  };
 
+  const cancelChange = () => {
+    setShowConfirm(false);
+    setSelectedTask(null);
+  };
   useEffect(() => {
     fetchTasks();
   }, []);
@@ -146,7 +178,14 @@ const showtaskoradd = () => {
                 <strong>Updated:</strong> {new Date(task.updated_at).toLocaleString()}
                 </p>
                 <span className={`status ${task.status}`}>{task.status}</span><div className="task-actions">
-                  <button
+                  <div className="task-actions">
+            <Select
+              options={options}
+              defaultValue={options.find((o) => o.value === task.status)}
+              onChange={(option) => handleStatusChange(task, option)}
+            />
+          </div>
+              {/* <button
                     className={`btn-toggle ${
                       task.status === "completed" ? "done" : "pending"
                     }`}
@@ -155,14 +194,15 @@ const showtaskoradd = () => {
                     {task.status === "completed"
                       ? "Mark Undone"
                       : "Mark Done"}
-                  </button>
+                  </button> */}
+                   
             <button onClick={() => startEdit(task)} className="btn-edit">
                 Edit
               </button>
                   {(user?.role === "staff" || user?.role === "admin") && (
                     <button
                       className="btn-delete"
-                      onClick={() => deleteTask(task.id)}
+                      onClick={() => confirmdelete(task.id)}
                     >
                       Delete
                     </button>
@@ -171,6 +211,36 @@ const showtaskoradd = () => {
               </div>
             ))
           )}
+        </div>
+      )}
+       {showConfirm && (
+        <div className="popup-overlay">
+          <div className="popup">
+            <h4>Confirm status change</h4>
+            <p>
+              Change status of <strong>{selectedTask?.['title']}</strong> to{" "}
+              <strong>{newStatus}</strong>?
+            </p>
+            <div className="popup-actions">
+              <button className="btn btn-m1-yse" onClick={() =>confirmChange()}>Yes</button>
+              <button className="btn btn-m-no" onClick={cancelChange}>No</button>
+            </div>
+          </div>
+        </div>
+      )}
+       {deleteConfirm && (
+        <div className="popup-overlay">
+          <div className="popup">
+            <h4>Confirm status change</h4>
+            <p>
+              Change status of <strong>{selectedTask?.['title']}</strong> to{" "}
+              <strong>{newStatus}</strong>?
+            </p>
+            <div className="popup-actions">
+              <button className="btn btn-m1-yse" onClick={()=>deleteTask()}>Yes</button>
+              <button className="btn btn-m-no" onClick={canceldelete}>No</button>
+            </div>
+          </div>
         </div>
       )}
     </div>
