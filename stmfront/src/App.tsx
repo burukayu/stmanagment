@@ -7,6 +7,7 @@ import Navbar from './pages/Navbar';
 import Register from './pages/Register';
 import { User } from './types';
 import { UserProvider } from "./pages/UserContext";
+import Users from './pages/users';
 const App: React.FC = () => {
    const [user, setUser] = useState<User | null>(() => {
     const storedUser = localStorage.getItem("user");
@@ -21,6 +22,7 @@ const App: React.FC = () => {
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/tasks" element={<Tasks />} />
+        <Route path="/users" element={<Users />} />
       </Routes>
     </Router>
     </UserProvider>

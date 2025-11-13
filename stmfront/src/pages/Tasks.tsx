@@ -28,9 +28,10 @@ const Tasks: React.FC = () => {
       return;
     }
     const res = await API.get("tasks/");
-    setTasks(res.data);
+    setTasks(res.data); 
   };
 
+ 
   const createTask = async () => {
     if (!title.trim()) return alert("Task title cannot be empty!");
     await API.post("tasks/", { title, description: desc });

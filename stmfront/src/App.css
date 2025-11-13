@@ -210,6 +210,7 @@
   border-radius: 8px;
   cursor: pointer;
   font-weight: 500;
+  margin: 2px;
 }
 
 .btn-toggle.pending {
@@ -225,6 +226,11 @@
 .btn-delete {
   background-color: #dc3545;
   color: white;
+
+}.btn-edit {
+  background-color: #898b24;
+  color: white;
+  
 }
 
 .btn-delete:hover {
@@ -284,4 +290,19 @@
   cursor: pointer;
   font-weight: 500;
   transition: 0.3s;
+}
+
+.user-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.user-table th,
+.user-table td {
+  border: 1px solid #ddd;
+  padding: 8px;
+}
+
+.user-table th {
+  background-color: #f2f2f2;
 }

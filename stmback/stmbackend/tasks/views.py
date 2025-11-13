@@ -72,3 +72,17 @@ class TaskDetailView(generics.RetrieveUpdateDestroyAPIView):
 # ...existing code...
     def __str__(self):
         return self.title
+
+
+
+class ComplatedTaskList(generics.ListCreateAPIView):
+    serializer_class = TaskSerializer
+    permission_classes = [permissions.IsAuthenticated]
+ 
+
+    def get_complatedtasks(self):
+        user = self.request.user
+        
+        if user.is_superuser:  # Admin
+            # All tasks except those created by other admins
+            return Task.objects.filter(status__in=['completed']).exclude(owner__is_superuser=True).order_by('-updated_at')

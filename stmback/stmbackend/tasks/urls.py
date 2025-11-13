@@ -6,9 +6,10 @@
 #     path('tasks/<int:pk>/', task_detail, name='task-detail'),
 # ]
 from django.urls import path
-from .views import TaskListCreateView, TaskDetailView
+from .views import TaskListCreateView, TaskDetailView,ComplatedTaskList
 
 urlpatterns = [
     path('', TaskListCreateView.as_view(), name='task-list'),
     path('<int:pk>/', TaskDetailView.as_view(), name='task-detail'),
+    path('complated/', ComplatedTaskList.as_view(), name='complated-task'),
 ]

@@ -14,3 +14,11 @@ export interface User {
   username: string;
   role: string;
 }
+export interface UsersI {
+  username: string;
+  id: number;
+  role: string;
+  email: string; 
+  is_superuser:boolean;
+  is_staff:boolean
+}

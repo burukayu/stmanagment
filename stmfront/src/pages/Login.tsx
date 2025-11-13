@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import API from "../api";
 import "./pages.css";
 import {jwtDecode} from "jwt-decode";
+import { useUser } from "./UserContext";
 
 interface DecodedToken {
   username: string;
@@ -13,13 +14,14 @@ const Login: React.FC = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
-
+  const { setUser } = useUser(); 
   const handleLogin = async () => {
     try {
       const res = await API.post("login/", { username, password });
       localStorage.setItem("token", res.data.access);
       const user: DecodedToken = jwtDecode(res.data.access);
       localStorage.setItem("user", JSON.stringify(user));
+       setUser(user);
       navigate("/tasks");
     } catch {
       alert("Login failed");
