@@ -31,7 +31,13 @@ const Navbar: React.FC = () => {
 
   return (
     <div className="navbar">
-      <h1 className="heading">Simple Tasks Manager</h1>
+      {/* Simple Tasks Manager */}
+      <h1 className="heading"></h1>
+     {user?(<>
+      {user.role=="admin"?( <a href="/users" className="ui">Users </a>):(null)}
+          <a href="/tasks" className="ui">Tasks </a>
+          </>):(null)
+     }
       <div className="nav-buttons">
         {!user? (
           <>
@@ -42,10 +48,7 @@ const Navbar: React.FC = () => {
               Create Account
             </button>
           </>
-        ) : (<>
-
-         {user.role=="admin"?( <a href="/users" className="ui">Users </a>):(null)}
-          <a href="/tasks" className="ui">Tasks </a>
+        ) : (<> 
           <button onClick={handleLogout} className="btn-nav">
             Logout
           </button>

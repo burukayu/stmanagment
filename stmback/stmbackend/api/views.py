@@ -65,18 +65,25 @@ def user_detail(request):
 class UserListView(APIView):
     permission_classes = [IsAuthenticated]  # or [IsAdminUser] if only admins can access
 
-    def get(self, request):
-        users = User.objects.all()
+    def get(self, request, status):
+        if status == 'Active':
+           users = User.objects.filter(is_active=True)
+        elif status == 'Inactive':
+             users = User.objects.filter(is_active=False)
+        else:
+            return Response({"error": "Invalid status"}, status=400)
+
         serializer = UserSerializer(users, many=True)
         return Response(serializer.data)
 
-
+   
+        
     def put(self, request, user_id):
         """Update user by ID"""
         user = get_object_or_404(User, id=user_id)
 
         # Only superusers or staff can edit other users
-        if not request.user.is_staff and not request.user.is_superuser:
+        if  not request.user.is_superuser:
             return Response(
                 {"detail": "You do not have permission to update users."},
                 status=status.HTTP_403_FORBIDDEN
@@ -89,20 +96,46 @@ class UserListView(APIView):
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-
-
-    def delete(self, request, user_id):
-        if not request.user.is_superuser:
+    def delete(self, request, user_id): 
+        if   request.user.is_superuser:
             return Response(
-                {"detail": "You do not have permission to delete users."},
+                {"detail": "You do not have permission to deactivate users."},
                 status=status.HTTP_403_FORBIDDEN
             )
 
         user = get_object_or_404(User, id=user_id)
         username = user.username
-        user.delete()
+
+        # Instead of deleting, mark as inactive
+        user.is_active = False
+        user.save()
 
         return Response(
-            {"message": f"User '{username}' deleted successfully."},
-            status=status.HTTP_204_NO_CONTENT
+            {"message": f"User '{username}' deactivated successfully."},
+            status=status.HTTP_200_OK
         )
+
+
+class ActivateUser(APIView):
+    permission_classes= IsAdminUser
+
+    def put(self, request, user_id):
+        if not request.user.is_superuser:
+            return Response({"detail":"You dont have right to activate the user"},
+            status=status.HTTP_403_FORBIDDEN)
+
+
+        user = get_object_or_404(User , id=user_id)
+
+
+        if user.is_active:
+            return Response({"detial":"the user is already active"},
+            status=status.HTTP_200_OK)
+
+
+        user.is_active=True
+        user.save
+
+
+        return Response({"detial":f"User'{user.name}' is successfuly activated"},
+        status=status.HTTP_200_OK)
